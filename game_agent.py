@@ -129,10 +129,42 @@ class CustomPlayer:
             if not self.iterative:
                 if self.method == 'minimax':
                     score, move = self.minimax(game, depth=self.search_depth)
-                else:
+                elif self.method == 'alphabeta':
                     score, move = self.alphabeta(game, depth=self.search_depth)
+                else:
+                    raise NotImplementedError
             else:
-                score, move = 0, (0, 0)
+                best_score = float('-inf')
+                best_move = (-1, -1)
+                if self.method == 'minimax':
+                    k = 0
+                    time_out_flag = False
+                    while not time_out_flag:
+                        k += 1
+                        try:
+                            score, move = self.minimax(game, depth=k)
+                            if score > best_score:
+                                best_score = score
+                                best_move = move
+                        except Timeout:
+                            time_out_flag = True
+
+                elif self.method == 'alphabeta':
+                    k = 0
+                    time_out_flag = False
+                    while not time_out_flag:
+                        k += 1
+                        try:
+                            score, move = self.alphabeta(game, depth=k)
+                            if score > best_score:
+                                best_score = score
+                                best_move = move
+                        except Timeout:
+                            time_out_flag = True
+                else:
+                    raise NotImplementedError
+
+                return best_move
 
         except Timeout:
             # Handle any actions required at timeout, if necessary
