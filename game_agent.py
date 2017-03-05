@@ -39,6 +39,7 @@ def custom_score(game, player):
 
     return len(game.get_legal_moves(player)) - 1.5 * len(game.get_legal_moves(game.get_opponent(player)))
 
+
 class CustomPlayer:
     """Game-playing agent that chooses a move using your evaluation function
     and a depth-limited minimax algorithm with alpha-beta pruning. You must
@@ -176,24 +177,26 @@ class CustomPlayer:
 
         best_move = (-1, -1)
 
+        # test for terminal state
         if depth == 0:
             return self.score(game, self), best_move
 
         if maximizing_player:
-            best_value = float("-inf")
+            best_score = float("-inf")
             maximizing_player = False
             best_func = max
         else:
-            best_value = float("inf")
+            best_score = float("inf")
             maximizing_player = True
             best_func = min
 
         for move in game.get_legal_moves():
+            # calc the score of child nodes
             value, _ = self.minimax(game.forecast_move(move), depth - 1, maximizing_player)
-            best_value, best_move = best_func((best_value, best_move), (value, move))
+            # find the best choice
+            best_score, best_move = best_func((best_score, best_move), (value, move))
 
-        return best_value, best_move
-
+        return best_score, best_move
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
@@ -236,5 +239,35 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        best_move = (-1, -1)
+        legal_moves = game.get_legal_moves()
+
+        # test for terminal state
+        if depth == 0:
+            return self.score(game, self), best_move
+
+        if maximizing_player:
+            best_score = float("-inf")
+            best_func = max
+        else:
+            best_score = float("inf")
+            best_func = min
+
+        for legal_move in legal_moves:
+            # calc the score of child nodes
+            score, _ = self.alphabeta(game=game.forecast_move(legal_move), depth=depth - 1,
+                                      alpha=alpha, beta=beta,
+                                      maximizing_player=not maximizing_player)
+            best_score, best_move = best_func((score, legal_move), (best_score, best_move))
+
+            # update alpha or beta
+            if maximizing_player:
+                alpha = max(best_score, alpha)
+            else:
+                beta = min(best_score, beta)
+
+            # pruning if beta <= alpha
+            if beta <= alpha:
+                return score, legal_move
+
+        return best_score, best_move
