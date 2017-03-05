@@ -121,48 +121,34 @@ class CustomPlayer:
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
 
+        if self.method == 'minimax':
+            strategy_func = self.minimax
+        elif self.method == 'alphabeta':
+            strategy_func = self.alphabeta
+        else:
+            raise NotImplementedError
+
         try:
             # The search method call (alpha beta or minimax) should happen in
             # here in order to avoid timeout. The try/except block will
             # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
             if not self.iterative:
-                if self.method == 'minimax':
-                    score, move = self.minimax(game, depth=self.search_depth)
-                elif self.method == 'alphabeta':
-                    score, move = self.alphabeta(game, depth=self.search_depth)
-                else:
-                    raise NotImplementedError
+                score, move = strategy_func(game, depth=self.search_depth)
             else:
                 best_score = float('-inf')
                 best_move = (-1, -1)
-                if self.method == 'minimax':
-                    k = 0
-                    time_out_flag = False
-                    while not time_out_flag:
-                        k += 1
-                        try:
-                            score, move = self.minimax(game, depth=k)
-                            if score > best_score:
-                                best_score = score
-                                best_move = move
-                        except Timeout:
-                            time_out_flag = True
-
-                elif self.method == 'alphabeta':
-                    k = 0
-                    time_out_flag = False
-                    while not time_out_flag:
-                        k += 1
-                        try:
-                            score, move = self.alphabeta(game, depth=k)
-                            if score > best_score:
-                                best_score = score
-                                best_move = move
-                        except Timeout:
-                            time_out_flag = True
-                else:
-                    raise NotImplementedError
+                k = 0
+                time_out_flag = False
+                while not time_out_flag:
+                    k += 1
+                    try:
+                        score, move = strategy_func(game, depth=k)
+                        if score > best_score:
+                            best_score = score
+                            best_move = move
+                    except Timeout:
+                        time_out_flag = True
 
                 return best_move
 
