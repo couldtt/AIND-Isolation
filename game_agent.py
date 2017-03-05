@@ -134,7 +134,7 @@ class CustomPlayer:
             # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
             if not self.iterative:
-                score, move = strategy_func(game, depth=self.search_depth)
+                score, best_move = strategy_func(game, depth=self.search_depth)
             else:
                 best_score = float('-inf')
                 best_move = (-1, -1)
@@ -150,14 +150,12 @@ class CustomPlayer:
                     except Timeout:
                         time_out_flag = True
 
-                return best_move
-
         except Timeout:
             # Handle any actions required at timeout, if necessary
             return legal_moves[random.randint(legal_moves) - 1]
 
         # Return the best move from the last completed search iteration
-        return move
+        return best_move
 
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.
