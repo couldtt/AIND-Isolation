@@ -47,9 +47,8 @@ def custom_score_final(game, player):
 
     own_moves = len(game.get_legal_moves(player))
     opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    blank_spaces = len(game.get_blank_spaces())
 
-    return 2 * own_moves - 1.5 * opponent_moves
+    return 2 * own_moves - 1.5 * opponent_moves + 1
 
 
 def custom_score(game, player):
