@@ -34,7 +34,7 @@ def custom_score_with_weighted_score_20(game, player):
     return len(game.get_legal_moves(player)) - 2 * len(game.get_legal_moves(game.get_opponent(player)))
 
 
-def custom_score_with_weighted_score_and_weighted_blank_spaces(game, player):
+def custom_score_final(game, player):
     if game.is_loser(player):
         return float("-inf")
 
@@ -69,7 +69,7 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    return custom_score_with_weighted_score_and_weighted_blank_spaces(game, player)
+    return custom_score_final(game, player)
 
 
 class CustomPlayer:
