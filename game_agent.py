@@ -24,14 +24,18 @@ def custom_score_with_weighted_score_15(game, player):
     return len(game.get_legal_moves(player)) - 1.5 * len(game.get_legal_moves(game.get_opponent(player)))
 
 
-def custom_score_with_weighted_score_20(game, player):
+def custom_score_with_blank_spaces(game, player):
     if game.is_loser(player):
         return float("-inf")
 
     if game.is_winner(player):
         return float("inf")
 
-    return len(game.get_legal_moves(player)) - 2 * len(game.get_legal_moves(game.get_opponent(player)))
+    own_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    blank_spaces = len(game.get_blank_spaces())
+
+    return 2 * own_moves - 1.5 * opponent_moves + 0.1 * blank_spaces
 
 
 def custom_score_final(game, player):
@@ -45,7 +49,8 @@ def custom_score_final(game, player):
     opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
     blank_spaces = len(game.get_blank_spaces())
 
-    return 2 * own_moves - 1.5 * opponent_moves + 0.1 * blank_spaces
+    return 2 * own_moves - 1.5 * opponent_moves
+
 
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
